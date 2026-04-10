@@ -31,11 +31,38 @@ class MainActivity : ComponentActivity() {
                     ) {
                         val navController: NavHostController = rememberNavController()
                         val sessionsData: List<Session> = listOf(
-                            Session("The Climbing Station","13/03/26", "1h 45m", listOf<Climb>(Climb(3,"Red",2,ClimbStatus.Sent,"Just go up"), Climb(4,"Green",3,ClimbStatus.Flashed,"Don't fall off"))),
-                            Session("The Climbing Station","08/03/26", "2h", listOf<Climb>()),
-                            Session("The Climbing Station","28/02/26", "1h50m", listOf<Climb>()),
-                            Session("The Climbing Station","25/02/26", "1h20m", listOf<Climb>()),
-                            Session("The Climbing Station","04/02/26", "1h50m", listOf<Climb>()),
+                            Session("The Climbing Station", "13/03/26", "1h 45m", listOf(
+                                Climb(3, "Red", 2, ClimbStatus.Sent, "Just go up"),
+                                Climb(4, "Green", 3, ClimbStatus.Flashed, "Don't fall off")
+                            )),
+                            Session("The Climbing Station", "08/03/26", "2h", emptyList()),
+
+                            // New Data Starts Here
+                            Session("Big Rock Hub", "20/03/26", "2h 15m", listOf(
+                                Climb(2, "Blue", 1, ClimbStatus.Flashed, "Warm up"),
+                                Climb(4, "Black", 5, ClimbStatus.Sent, "Hard crimpy move at the top"),
+                                Climb(5, "Yellow", 8, ClimbStatus.Project, "Need more finger strength for the start")
+                            )),
+                            Session("The Depot", "27/03/26", "1h 30m", listOf(
+                                Climb(3, "Purple", 2, ClimbStatus.Sent, "Nice slab"),
+                                Climb(3, "Purple", 1, ClimbStatus.Flashed, "Easy dynamic move"),
+                                Climb(4, "White", 4, ClimbStatus.Sent, "Technical footwork required")
+                            )),
+                            Session("Big Rock Hub", "02/04/26", "2h", listOf(
+                                Climb(4, "Green", 2, ClimbStatus.Sent, "Repeat from last time"),
+                                Climb(5, "Yellow", 10, ClimbStatus.Sent, "FINALLY SENT IT!"),
+                                Climb(6, "Orange", 3, ClimbStatus.Project, "New highest grade attempt")
+                            )),
+                            Session("The Climbing Station", "05/04/26", "1h 10m", listOf(
+                                Climb(3, "Red", 1, ClimbStatus.Flashed, "Quick session"),
+                                Climb(4, "Green", 2, ClimbStatus.Sent, "Feeling strong")
+                            )),
+                            Session("Flashpoint", "10/04/26", "2h 30m", listOf(
+                                Climb(2, "Blue", 1, ClimbStatus.Flashed, "Good reset"),
+                                Climb(3, "Red", 1, ClimbStatus.Flashed, "Soft for the grade"),
+                                Climb(4, "Black", 6, ClimbStatus.Sent, "Burly overhang"),
+                                Climb(5, "Yellow", 4, ClimbStatus.Project, "Pumped out at the end")
+                            ))
                         )
                         NavHost(
                             navController = navController,
@@ -77,6 +104,9 @@ class MainActivity : ComponentActivity() {
                                     navController
                                 )
                             }
+                            composable(route = com.example.bouldering_tracker.AppScreens.Stats.name){
+                                StatsScreen(sessionsData, navController)
+                            }
                         }
                     }
                 }
@@ -91,7 +121,6 @@ enum class AppScreens{
     ClimbInfo, //AppScreens.ClimbInfo.name
     CreateSession, //AppScreens.CreateSession.name
     AddClimb, //AppScreens.AddClimb.name
-    ViewStats, //AppScreens.ViewStats.name
+    Stats, //AppScreens.Stats.name
     Settings, //AppScreens.Settings.name
-
 }
