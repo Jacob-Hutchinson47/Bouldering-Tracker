@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
                     ) {
                         val navController: NavHostController = rememberNavController()
                         val sessionsData: List<Session> = listOf(
-                            Session("The Climbing Station","13/03/26", "1h 45m", listOf<Climb>(Climb(3,"Red",2,ClimbStatus.Sent,""))),
+                            Session("The Climbing Station","13/03/26", "1h 45m", listOf<Climb>(Climb(3,"Red",2,ClimbStatus.Sent,"Just go up"), Climb(4,"Green",3,ClimbStatus.Flashed,"Don't fall off"))),
                             Session("The Climbing Station","08/03/26", "2h", listOf<Climb>()),
                             Session("The Climbing Station","28/02/26", "1h50m", listOf<Climb>()),
                             Session("The Climbing Station","25/02/26", "1h20m", listOf<Climb>()),

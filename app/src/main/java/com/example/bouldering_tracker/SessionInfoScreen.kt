@@ -102,6 +102,19 @@ fun SessionInfoScreen(sessionsData:List<Session>, sessionIndex: Int, navControll
                 text = sessionsData[sessionIndex].climbs.count {it.status == ClimbStatus.Flashed}.toString(),
             )
         }
+        // Highest Grade Sent
+        Row(modifier =  Modifier.padding(8.dp)){
+            Text(
+                text = "Highest Grade Sent: ",
+                fontWeight = FontWeight.Bold,
+            )
+            val highestGrade = sessionsData[sessionIndex].climbs
+                .filter { it.status == ClimbStatus.Sent || it.status == ClimbStatus.Flashed }
+                .maxOfOrNull {it.grade}
+            Text(
+                text = if (highestGrade != null) "V$highestGrade" else "N/A"
+            )
+        }
         Button(
             onClick = {
                 //TODO

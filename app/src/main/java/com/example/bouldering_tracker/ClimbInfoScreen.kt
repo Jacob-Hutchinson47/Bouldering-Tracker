@@ -97,6 +97,16 @@ fun ClimbInfoScreen(sessionsData:List<Session>, sessionIndex: Int, climbIndex: I
                 text = sessionsData[sessionIndex].climbs[climbIndex].status.name,
             )
         }
+        // Notes
+        Row(modifier =  Modifier.padding(8.dp)){
+            Text(
+                text = "Notes: ",
+                fontWeight = FontWeight.Bold,
+            )
+            Text(
+                text = sessionsData[sessionIndex].climbs[climbIndex].note,
+            )
+        }
         Button(
             onClick = {
                 //TODO
