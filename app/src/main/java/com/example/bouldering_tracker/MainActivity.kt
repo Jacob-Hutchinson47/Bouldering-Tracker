@@ -30,12 +30,13 @@ class MainActivity : ComponentActivity() {
                         color = MaterialTheme.colorScheme.background
                     ) {
                         val navController: NavHostController = rememberNavController()
-                        val sessionsData: List<List<String>> = listOf(listOf("*Date*", "*Location*", "*Time*", "*Climbs*"),
-                            listOf("13/03/26", "The Climbing Station", "1h 45m", "15"),
-                            listOf("8/03/26", "The Climbing Station", "2h", "22"),
-                            listOf("28/02/26", "The Climbing Station", "1h50m", "19"),
-                            listOf("25/02/26", "The Climbing Station", "1h20m", "11"),
-                            listOf("4/02/26", "The Climbing Station", "1h50m", "19"))
+                        val sessionsData: List<Session> = listOf(
+                            Session("The Climbing Station","13/03/26", "1h 45m", listOf<Climb>()),
+                            Session("The Climbing Station","8/03/26", "2h", listOf<Climb>()),
+                            Session("The Climbing Station","28/02/26", "1h50m", listOf<Climb>()),
+                            Session("The Climbing Station","25/02/26", "1h20m", listOf<Climb>()),
+                            Session("The Climbing Station","4/02/26", "1h50m", listOf<Climb>()),
+                        )
                         NavHost(
                             navController = navController,
                             startDestination = com.example.bouldering_tracker.AppScreens.Home.name

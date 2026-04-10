@@ -9,9 +9,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun SessionInfoScreen(sessionsData:List<List<String>>, itemIndex: Int, modifier:Modifier = Modifier){
+fun SessionInfoScreen(sessionsData:List<Session>, itemIndex: Int, modifier:Modifier = Modifier){
     Text(
-        text = sessionsData[itemIndex][0],
+        text = sessionsData[itemIndex].date,
         textAlign = TextAlign.Center,
         fontSize = 30.sp,
         modifier = modifier.padding(16.dp)

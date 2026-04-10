@@ -28,7 +28,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.bouldering_tracker.ui.theme.BoulderingTrackerTheme
 
 @Composable
-fun HomeScreen(sessionsData: List<List<String>>, navController: NavHostController, modifier: Modifier = Modifier) {
+fun HomeScreen(sessionsData: List<Session>, navController: NavHostController, modifier: Modifier = Modifier) {
     Column (modifier=
         modifier.padding(16.dp)//add padding all around
     ){
@@ -84,7 +84,7 @@ fun HomeScreen(sessionsData: List<List<String>>, navController: NavHostControlle
 }
 
 @Composable
-fun SessionsList(sessions:List<List<String>>, navController: NavHostController, modifier: Modifier){//create a lazy list of texts from the data
+fun SessionsList(sessions:List<Session>, navController: NavHostController, modifier: Modifier){//create a lazy list of texts from the data
     val context = LocalContext.current //get the activity context within a composable function
     LazyColumn {
         itemsIndexed(sessions) {//iterate through each session in the List and create a Text for each session
@@ -97,28 +97,27 @@ fun SessionsList(sessions:List<List<String>>, navController: NavHostController, 
                     .padding(4.dp).fillMaxWidth(1f)
                     .clickable(
                         onClick = { //handle the onClick event to the list item
-                            Toast.makeText(context, "Item Clicked!", Toast.LENGTH_LONG).show()
                             navController.navigate(route = "SessionInfo/$index")
                         })
             ) {
                 Text(
-                    text = session[0],
+                    text = session.date,
                     modifier = Modifier
                         .padding(start = 12.dp, top = 12.dp),
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "Location: " + session[1],
+                    text = "Location: " + session.location,
                     modifier = Modifier
                         .padding(start = 12.dp),
                 )
                 Text(
-                    text = "Duration: " + session[2],
+                    text = "Duration: " + session.duration,
                     modifier = Modifier
                         .padding(start = 12.dp),
                 )
                 Text(
-                    text = "Problems Sent: " + session[3],
+                    text = "Problems Climbed: " + session.climbs.count(),
                     modifier = Modifier
                         .padding(start = 12.dp, bottom = 12.dp),
                 )
@@ -126,12 +125,3 @@ fun SessionsList(sessions:List<List<String>>, navController: NavHostController, 
         }
     }
 }
-/*
-@Preview(showBackground = true)
-@Composable
-fun HomeScreenPreview() {
-    BoulderingTrackerTheme {
-        HomeScreen()
-    }
-}
-*/
