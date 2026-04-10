@@ -4,7 +4,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -26,7 +25,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 
 @Composable
-fun SessionInfoScreen(sessionsData:List<Session>, itemIndex: Int, navController: NavHostController, modifier:Modifier = Modifier){
+fun SessionInfoScreen(sessionsData:List<Session>, sessionIndex: Int, navController: NavHostController, modifier:Modifier = Modifier){
     Column (modifier=
         modifier.padding(16.dp)//add padding all around
     ) {
@@ -34,7 +33,7 @@ fun SessionInfoScreen(sessionsData:List<Session>, itemIndex: Int, navController:
             modifier = Modifier
                 .clickable(
                     onClick = {
-                        navController.navigate(route = "Home")
+                        navController.popBackStack()
                     }))
         Text(
             text = "Session Info",
@@ -50,7 +49,7 @@ fun SessionInfoScreen(sessionsData:List<Session>, itemIndex: Int, navController:
                 fontWeight = FontWeight.Bold,
             )
             Text(
-                text = sessionsData[itemIndex].location,
+                text = sessionsData[sessionIndex].location,
             )
         }
         // Date
@@ -60,7 +59,7 @@ fun SessionInfoScreen(sessionsData:List<Session>, itemIndex: Int, navController:
                 fontWeight = FontWeight.Bold,
             )
             Text(
-                text = sessionsData[itemIndex].date,
+                text = sessionsData[sessionIndex].date,
             )
         }
         // Duration
@@ -70,7 +69,7 @@ fun SessionInfoScreen(sessionsData:List<Session>, itemIndex: Int, navController:
                 fontWeight = FontWeight.Bold,
             )
             Text(
-                text = sessionsData[itemIndex].duration,
+                text = sessionsData[sessionIndex].duration,
             )
         }
         // Climbs Attempted
@@ -80,7 +79,7 @@ fun SessionInfoScreen(sessionsData:List<Session>, itemIndex: Int, navController:
                 fontWeight = FontWeight.Bold,
             )
             Text(
-                text = sessionsData[itemIndex].climbs.count().toString(),
+                text = sessionsData[sessionIndex].climbs.count().toString(),
             )
         }
         // Climbs Sent
@@ -90,7 +89,7 @@ fun SessionInfoScreen(sessionsData:List<Session>, itemIndex: Int, navController:
                 fontWeight = FontWeight.Bold,
             )
             Text(
-                text = sessionsData[itemIndex].climbs.count {it.status == ClimbStatus.Sent || it.status == ClimbStatus.Flashed}.toString(),
+                text = sessionsData[sessionIndex].climbs.count {it.status == ClimbStatus.Sent || it.status == ClimbStatus.Flashed}.toString(),
             )
         }
         // Climbs Flashed
@@ -100,7 +99,7 @@ fun SessionInfoScreen(sessionsData:List<Session>, itemIndex: Int, navController:
                 fontWeight = FontWeight.Bold,
             )
             Text(
-                text = sessionsData[itemIndex].climbs.count {it.status == ClimbStatus.Flashed}.toString(),
+                text = sessionsData[sessionIndex].climbs.count {it.status == ClimbStatus.Flashed}.toString(),
             )
         }
         Button(
@@ -116,17 +115,20 @@ fun SessionInfoScreen(sessionsData:List<Session>, itemIndex: Int, navController:
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(8.dp)
         )
-        ClimbsList(sessionsData[itemIndex].climbs, navController, modifier)
+        ClimbsList(sessionsData[sessionIndex].climbs, sessionIndex, navController)
     }
-
 }
 
 @Composable
-fun ClimbsList(climbs:List<Climb>, navController: NavHostController, modifier: Modifier){//create a lazy list of texts from the data
+fun ClimbsList(
+    climbs: List<Climb>,
+    sessionIndex: Int, // Add this parameter
+    navController: NavHostController,
+) {
     if (climbs.count() > 0) {
         LazyColumn {
             itemsIndexed(climbs) {//iterate through each climb in the List and create a Card for each climb
-                    index, climb ->
+                    climbIndex, climb ->
                 Card(
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.surfaceVariant,
@@ -135,7 +137,7 @@ fun ClimbsList(climbs:List<Climb>, navController: NavHostController, modifier: M
                         .padding(4.dp).fillMaxWidth(1f)
                         .clickable(
                             onClick = { //handle the onClick event to the list item
-                                navController.navigate(route = "ClimbInfo/$index")
+                                navController.navigate("${AppScreens.ClimbInfo.name}/$sessionIndex/$climbIndex")
                             })
                 ) {
                     Text(

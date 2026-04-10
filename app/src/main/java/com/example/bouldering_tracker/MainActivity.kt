@@ -46,21 +46,37 @@ class MainActivity : ComponentActivity() {
                                 HomeScreen(sessionsData, navController)
                             }
                             composable(
-                                route = com.example.bouldering_tracker.AppScreens.SessionInfo.name+"/{index}",
-                                arguments = listOf(
-                                    navArgument(name = "index"){
-                                        type = NavType.IntType //extract the argument
-                                    }
-                                )
-                            ) {
-                                    index->
+                                route = AppScreens.SessionInfo.name + "/{sessionIndex}",
+                                arguments = listOf(navArgument("sessionIndex") { type = NavType.IntType })
+                            ) { backStackEntry ->
                                 SessionInfoScreen(
                                     sessionsData,
-                                    itemIndex = index.arguments?.getInt("index")?:0,//passing the index
+                                    sessionIndex = backStackEntry.arguments?.getInt("sessionIndex") ?: 0,
                                     navController
                                 )
                             }
+                            composable(
+                                route = com.example.bouldering_tracker.AppScreens.ClimbInfo.name+"/{sessionIndex}/{climbIndex}",
+                                arguments = listOf(
+                                    navArgument(name = "sessionIndex"){
+                                        type = NavType.IntType
+                                    },
+                                    navArgument(name = "climbIndex"){
+                                        type = NavType.IntType
+                                    }
+                                )
+                            ) {
+                                    backStackEntry ->
+                                val sessionIndex = backStackEntry.arguments?.getInt("sessionIndex") ?: 0
+                                val climbIndex = backStackEntry.arguments?.getInt("climbIndex") ?: 0
 
+                                ClimbInfoScreen(
+                                    sessionsData,
+                                    sessionIndex = sessionIndex,
+                                    climbIndex = climbIndex,
+                                    navController
+                                )
+                            }
                         }
                     }
                 }
