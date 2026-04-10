@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -29,6 +30,12 @@ fun SessionInfoScreen(sessionsData:List<Session>, itemIndex: Int, navController:
     Column (modifier=
         modifier.padding(16.dp)//add padding all around
     ) {
+        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null,
+            modifier = Modifier
+                .clickable(
+                    onClick = {
+                        navController.navigate(route = "Home")
+                    }))
         Text(
             text = "Session Info",
             modifier = modifier.padding(bottom = 12.dp)
