@@ -46,7 +46,8 @@ fun HomeScreen(sessionsData: List<Session>, navController: NavHostController, mo
                 },
                 modifier
                     .weight(1f, true)
-                    .height(64.dp),
+                    .height(64.dp)
+                    .padding(2.dp)
             ) {
                 Text(text = "Create New Session",
                     textAlign = TextAlign.Center)
@@ -58,6 +59,7 @@ fun HomeScreen(sessionsData: List<Session>, navController: NavHostController, mo
                 modifier
                     .weight(1f, true)
                     .height(64.dp)
+                    .padding(2.dp)
             ) {
                 Text(text = "View Stats",
                     textAlign = TextAlign.Center)
@@ -69,6 +71,7 @@ fun HomeScreen(sessionsData: List<Session>, navController: NavHostController, mo
                 modifier
                     .weight(1f, true)
                     .height(64.dp)
+                    .padding(2.dp)
             ) {
                 Text(text = "Settings",
                     textAlign = TextAlign.Center)
