@@ -79,7 +79,7 @@ fun HomeScreen(sessionsData: List<Session>, navController: NavHostController, mo
             fontWeight = FontWeight.Bold,
             modifier =  Modifier.padding(8.dp)
         )
-        SessionsList(sessionsData, navController,modifier)
+        SessionsList(sessionsData, navController, modifier)
     }
 }
 

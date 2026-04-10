@@ -1,11 +1,11 @@
 package com.example.bouldering_tracker
 
 data class Climb(
-    val grade: Int,
-    val colour: String,
-    val attempts: Int,
-    val status: ClimbStatus,
-    val note: String,
+    var grade: Int,
+    var colour: String,
+    var attempts: Int,
+    var status: ClimbStatus,
+    var note: String,
 )
 
 enum class ClimbStatus{

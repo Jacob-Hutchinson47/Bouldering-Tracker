@@ -3,8 +3,8 @@ package com.example.bouldering_tracker
 import java.util.Date
 
 data class Session(
-    val location: String,
-    val date: String,
-    val duration: String,
-    val climbs: List<Climb>
+    var location: String,
+    var date: String,
+    var duration: String,
+    var climbs: List<Climb>
 )
