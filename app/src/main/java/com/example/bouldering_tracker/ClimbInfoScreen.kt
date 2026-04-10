@@ -57,6 +57,26 @@ fun ClimbInfoScreen(sessionsData:List<Session>, sessionIndex: Int, climbIndex: I
                 text = sessionsData[sessionIndex].climbs[climbIndex].colour,
             )
         }
+        // Location
+        Row(modifier =  Modifier.padding(8.dp)){
+            Text(
+                text = "Location: ",
+                fontWeight = FontWeight.Bold,
+            )
+            Text(
+                text = sessionsData[sessionIndex].location,
+            )
+        }
+        // Date
+        Row(modifier =  Modifier.padding(8.dp)){
+            Text(
+                text = "Date: ",
+                fontWeight = FontWeight.Bold,
+            )
+            Text(
+                text = sessionsData[sessionIndex].date,
+            )
+        }
         // Attempts
         Row(modifier =  Modifier.padding(8.dp)){
             Text(
