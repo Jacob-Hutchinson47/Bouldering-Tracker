@@ -27,6 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavHostController
 
 @Composable
@@ -122,9 +123,17 @@ fun SessionInfoScreen(sessionsData:List<Session>, sessionIndex: Int, navControll
             )
         }
         Row () {
-            Button(
+            Button( // Share
                 onClick = {
-                    //TODO
+                    val sendIntent: Intent = Intent().apply {
+                        action = Intent.ACTION_SEND
+                        val shareText = "I just finished a bouldering session at ${sessionsData[sessionIndex].location}! " +
+                                "I attempted ${sessionsData[sessionIndex].climbs.size} climbs."
+                        putExtra(Intent.EXTRA_TEXT, shareText)
+                        type = "text/plain"
+                    }
+                    val shareIntent = Intent.createChooser(sendIntent, "Share Session via")
+                    context.startActivity(shareIntent)
                 },
                 modifier = Modifier.padding(8.dp)
             ) {
@@ -134,7 +143,7 @@ fun SessionInfoScreen(sessionsData:List<Session>, sessionIndex: Int, navControll
                     textAlign = TextAlign.Center
                 )
             }
-            Button(
+            Button( // View on map
                 onClick = {
                     //get session location
                     val location = sessionsData[sessionIndex].location

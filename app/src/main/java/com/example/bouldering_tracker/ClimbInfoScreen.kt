@@ -116,7 +116,14 @@ fun ClimbInfoScreen(sessionsData:List<Session>, sessionIndex: Int, climbIndex: I
         Row() {
             Button(
                 onClick = {
-                    //TODO
+                    val sendIntent: Intent = Intent().apply {
+                        action = Intent.ACTION_SEND
+                        val shareText = "I just ${sessionsData[sessionIndex].climbs[climbIndex].status.name} a V${sessionsData[sessionIndex].climbs[climbIndex].grade} climb at ${sessionsData[sessionIndex].location}! "
+                        putExtra(Intent.EXTRA_TEXT, shareText)
+                        type = "text/plain"
+                    }
+                    val shareIntent = Intent.createChooser(sendIntent, "Share Climb via")
+                    context.startActivity(shareIntent)
                 },
                 modifier =  Modifier.padding(8.dp)) {
                 Icon(imageVector = Icons.Default.Share, contentDescription = null)
