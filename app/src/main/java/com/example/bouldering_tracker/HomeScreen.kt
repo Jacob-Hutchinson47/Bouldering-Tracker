@@ -85,43 +85,50 @@ fun HomeScreen(sessionsData: List<Session>, navController: NavHostController, mo
 
 @Composable
 fun SessionsList(sessions:List<Session>, navController: NavHostController, modifier: Modifier){//create a lazy list of texts from the data
-    val context = LocalContext.current //get the activity context within a composable function
-    LazyColumn {
-        itemsIndexed(sessions) {//iterate through each session in the List and create a Text for each session
-                index, session ->
-            Card(
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                ),
-                modifier = Modifier
-                    .padding(4.dp).fillMaxWidth(1f)
-                    .clickable(
-                        onClick = { //handle the onClick event to the list item
-                            navController.navigate(route = "SessionInfo/$index")
-                        })
-            ) {
-                Text(
-                    text = session.date,
+    if (sessions.count() > 0) {
+        LazyColumn {
+            itemsIndexed(sessions) {//iterate through each session in the List and create a Card for each session
+                    index, session ->
+                Card(
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    ),
                     modifier = Modifier
-                        .padding(start = 12.dp, top = 12.dp),
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = "Location: " + session.location,
-                    modifier = Modifier
-                        .padding(start = 12.dp),
-                )
-                Text(
-                    text = "Duration: " + session.duration,
-                    modifier = Modifier
-                        .padding(start = 12.dp),
-                )
-                Text(
-                    text = "Problems Climbed: " + session.climbs.count(),
-                    modifier = Modifier
-                        .padding(start = 12.dp, bottom = 12.dp),
-                )
+                        .padding(4.dp).fillMaxWidth(1f)
+                        .clickable(
+                            onClick = { //handle the onClick event to the list item
+                                navController.navigate(route = "SessionInfo/$index")
+                            })
+                ) {
+                    Text(
+                        text = session.date,
+                        modifier = Modifier
+                            .padding(start = 12.dp, top = 12.dp),
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "Location: " + session.location,
+                        modifier = Modifier
+                            .padding(start = 12.dp),
+                    )
+                    Text(
+                        text = "Duration: " + session.duration,
+                        modifier = Modifier
+                            .padding(start = 12.dp),
+                    )
+                    Text(
+                        text = "Problems Climbed: " + session.climbs.count(),
+                        modifier = Modifier
+                            .padding(start = 12.dp, bottom = 12.dp),
+                    )
+                }
             }
         }
+    } else {
+        Text(
+            text = "No Sessions",
+            modifier = Modifier
+                .padding(12.dp),
+        )
     }
 }
