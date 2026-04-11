@@ -60,7 +60,7 @@ fun HomeScreen(sessionsData: List<Session>, navController: NavHostController, mo
             }
             Button( // Settings
                 onClick = {
-                    //TODO
+                    navController.navigate(route = "Settings")
                 },
                 modifier
                     .weight(1f, true)

@@ -107,6 +107,9 @@ class MainActivity : ComponentActivity() {
                             composable(route = com.example.bouldering_tracker.AppScreens.Stats.name){
                                 StatsScreen(sessionsData, navController)
                             }
+                            composable(route = com.example.bouldering_tracker.AppScreens.Settings.name){
+                                SettingsScreen(navController)
+                            }
                         }
                     }
                 }
