@@ -39,14 +39,13 @@ import java.util.Calendar
 fun SettingsScreen(navController: NavHostController, modifier:Modifier = Modifier){
     var defaultLocation by rememberSaveable {mutableStateOf("The Climbing Station")}
 
-    var sessionRemindersEnabled by remember {mutableStateOf(false)}
+    var sessionRemindersEnabled by remember {mutableStateOf(true)}
 
     var showTimePicker by remember {mutableStateOf(false)} // Track visibility of reminder time picker
 
-    val currentTime = Calendar.getInstance()
     val timePickerState = rememberTimePickerState(
-        initialHour = currentTime.get(Calendar.HOUR_OF_DAY),
-        initialMinute = currentTime.get(Calendar.MINUTE),
+        initialHour = 16,
+        initialMinute = 0,
         is24Hour = true,
     )
 
