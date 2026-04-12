@@ -175,7 +175,7 @@ fun CreateSessionScreen(navController: NavHostController, modifier:Modifier = Mo
         Row () {
             Button(
                 onClick = {
-                    //TODO
+                    navController.navigate(route = "AddClimb")
                 },
                 modifier
                     .weight(1f, true)
@@ -206,10 +206,6 @@ fun CreateSessionScreen(navController: NavHostController, modifier:Modifier = Mo
                         ),
                         modifier = Modifier
                             .padding(4.dp).fillMaxWidth(1f)
-                            .clickable(
-                                onClick = { //handle the onClick event to the list item
-                                    navController.navigate("${AppScreens.AddClimb.name}/$climbIndex")
-                                })
                     ) {
                         Text(
                             text = "V" + climb.grade + " - " + climb.colour + " Holds",
