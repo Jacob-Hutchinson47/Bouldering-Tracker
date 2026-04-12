@@ -110,6 +110,9 @@ class MainActivity : ComponentActivity() {
                             composable(route = com.example.bouldering_tracker.AppScreens.Settings.name){
                                 SettingsScreen(navController)
                             }
+                            composable(route = com.example.bouldering_tracker.AppScreens.CreateSession.name){
+                                CreateSessionScreen(navController)
+                            }
                         }
                     }
                 }

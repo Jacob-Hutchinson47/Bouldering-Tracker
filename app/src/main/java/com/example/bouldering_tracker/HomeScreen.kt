@@ -36,7 +36,7 @@ fun HomeScreen(sessionsData: List<Session>, navController: NavHostController, mo
         Row(){
             Button( // Create new session
                 onClick = {
-                    //TODO
+                    navController.navigate(route = "CreateSession")
                 },
                 modifier
                     .weight(1f, true)
