@@ -6,5 +6,5 @@ data class Session(
     var location: String,
     var date: String,
     var duration: String,
-    var climbs: List<Climb>
+    var climbs: MutableList<Climb>
 )

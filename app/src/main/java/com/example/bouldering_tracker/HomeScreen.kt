@@ -85,7 +85,7 @@ fun SessionsList(sessions:List<Session>, navController: NavHostController, modif
     if (sessions.count() > 0) {
         LazyColumn {
             itemsIndexed(sessions) {//iterate through each session in the List and create a Card for each session
-                    climbIndex, session ->
+                    sessionIndex, session ->
                 Card(
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.surfaceVariant,
@@ -94,7 +94,7 @@ fun SessionsList(sessions:List<Session>, navController: NavHostController, modif
                         .padding(4.dp).fillMaxWidth(1f)
                         .clickable(
                             onClick = { //handle the onClick event to the list item
-                                navController.navigate(route = "SessionInfo/$climbIndex")
+                                navController.navigate(route = "SessionInfo/$sessionIndex")
                             })
                 ) {
                     Text(

@@ -20,7 +20,6 @@ import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -33,7 +32,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -43,7 +41,9 @@ import androidx.navigation.NavHostController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateSessionScreen(navController: NavHostController, modifier:Modifier = Modifier){
+fun CreateSessionScreen(sessions: MutableList<Session>, navController: NavHostController, modifier:Modifier = Modifier){
+    var newSession = Session("", "", "", mutableListOf())
+
     var location by rememberSaveable {mutableStateOf("The Climbing Station")}
 
     var showDatePicker by remember {mutableStateOf(false)}
@@ -57,13 +57,6 @@ fun CreateSessionScreen(navController: NavHostController, modifier:Modifier = Mo
         initialMinute = 0,
         is24Hour = true // Use 24h to avoid AM/PM confusion for duration
     )
-
-    //TODO
-    var climbs = listOf(
-        Climb(2, "Blue", 1, ClimbStatus.Flashed, "Good reset"),
-        Climb(3, "Red", 1, ClimbStatus.Flashed, "Soft for the grade"),
-        Climb(4, "Black", 6, ClimbStatus.Sent, "Burly overhang"),
-        Climb(5, "Yellow", 4, ClimbStatus.Project, "Pumped out at the end"))
 
     Column (modifier=
         modifier
@@ -192,13 +185,13 @@ fun CreateSessionScreen(navController: NavHostController, modifier:Modifier = Mo
             fontWeight = FontWeight.Bold,
             modifier =  Modifier.padding(8.dp)
         )
-        if (climbs.count() > 0) {
+        if (newSession.climbs.count() > 0) {
             LazyColumn (
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth()
             ) {
-                itemsIndexed(climbs) {//iterate through each climb in the List and create a Card for each climb
+                itemsIndexed(newSession.climbs) {//iterate through each climb in the List and create a Card for each climb
                         climbIndex, climb ->
                     Card(
                         colors = CardDefaults.cardColors(
@@ -206,6 +199,10 @@ fun CreateSessionScreen(navController: NavHostController, modifier:Modifier = Mo
                         ),
                         modifier = Modifier
                             .padding(4.dp).fillMaxWidth(1f)
+                            /*.clickable(
+                                onClick = { //handle the onClick event to the list item
+                                    navController.navigate(route = "EditClimb/$climbIndex")
+                                })*/
                     ) {
                         Text(
                             text = "V" + climb.grade + " - " + climb.colour + " Holds",
@@ -229,13 +226,18 @@ fun CreateSessionScreen(navController: NavHostController, modifier:Modifier = Mo
             Text(
                 text = "No Climbs",
                 modifier = Modifier
-                    .padding(12.dp),
+                    .padding(12.dp)
+                    .weight(1f)
             )
         }
 
         Button(
             onClick = {
-                //TODO
+                newSession.location = location
+                newSession.date = selectedDateText
+                newSession.duration = durationText
+                sessions.add(newSession)
+                navController.popBackStack() // Go back to home screen
             },
             modifier = Modifier
                 .fillMaxWidth()

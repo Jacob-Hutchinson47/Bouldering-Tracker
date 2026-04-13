@@ -30,40 +30,47 @@ class MainActivity : ComponentActivity() {
                         color = MaterialTheme.colorScheme.background
                     ) {
                         val navController: NavHostController = rememberNavController()
-                        val sessionsData: List<Session> = listOf(
-                            Session("The Climbing Station", "13/03/26", "1h 45m", listOf(
+                        val sessionsData: MutableList<Session> = mutableListOf(
+                            Session("The Climbing Station", "13/03/26", "1h 45m", mutableListOf(
                                 Climb(3, "Red", 2, ClimbStatus.Sent, "Just go up"),
                                 Climb(4, "Green", 3, ClimbStatus.Flashed, "Don't fall off")
                             )),
-                            Session("The Climbing Station", "08/03/26", "2h", emptyList()),
+                            Session("The Climbing Station", "08/03/26", "2h", mutableListOf()),
 
                             // New Data Starts Here
-                            Session("Big Rock Hub", "20/03/26", "2h 15m", listOf(
+                            Session("Big Rock Hub", "20/03/26", "2h 15m", mutableListOf(
                                 Climb(2, "Blue", 1, ClimbStatus.Flashed, "Warm up"),
                                 Climb(4, "Black", 5, ClimbStatus.Sent, "Hard crimpy move at the top"),
                                 Climb(5, "Yellow", 8, ClimbStatus.Project, "Need more finger strength for the start")
                             )),
-                            Session("The Depot", "27/03/26", "1h 30m", listOf(
+                            Session("The Depot", "27/03/26", "1h 30m", mutableListOf(
                                 Climb(3, "Purple", 2, ClimbStatus.Sent, "Nice slab"),
                                 Climb(3, "Purple", 1, ClimbStatus.Flashed, "Easy dynamic move"),
                                 Climb(4, "White", 4, ClimbStatus.Sent, "Technical footwork required")
                             )),
-                            Session("Big Rock Hub", "02/04/26", "2h", listOf(
+                            Session("Big Rock Hub", "02/04/26", "2h", mutableListOf(
                                 Climb(4, "Green", 2, ClimbStatus.Sent, "Repeat from last time"),
                                 Climb(5, "Yellow", 10, ClimbStatus.Sent, "FINALLY SENT IT!"),
                                 Climb(6, "Orange", 3, ClimbStatus.Project, "New highest grade attempt")
                             )),
-                            Session("The Climbing Station", "05/04/26", "1h 10m", listOf(
+                            Session("The Climbing Station", "05/04/26", "1h 10m", mutableListOf(
                                 Climb(3, "Red", 1, ClimbStatus.Flashed, "Quick session"),
                                 Climb(4, "Green", 2, ClimbStatus.Sent, "Feeling strong")
                             )),
-                            Session("Flashpoint", "10/04/26", "2h 30m", listOf(
+                            Session("Flashpoint", "10/04/26", "2h 30m", mutableListOf(
                                 Climb(2, "Blue", 1, ClimbStatus.Flashed, "Good reset"),
                                 Climb(3, "Red", 1, ClimbStatus.Flashed, "Soft for the grade"),
                                 Climb(4, "Black", 6, ClimbStatus.Sent, "Burly overhang"),
                                 Climb(5, "Yellow", 4, ClimbStatus.Project, "Pumped out at the end")
                             ))
                         )
+
+                        /*var climbsData = listOf(
+                            Climb(2, "Blue", 1, ClimbStatus.Flashed, "Good reset"),
+                            Climb(3, "Red", 1, ClimbStatus.Flashed, "Soft for the grade"),
+                            Climb(4, "Black", 6, ClimbStatus.Sent, "Burly overhang"),
+                            Climb(5, "Yellow", 4, ClimbStatus.Project, "Pumped out at the end"))*/
+
                         NavHost(
                             navController = navController,
                             startDestination = com.example.bouldering_tracker.AppScreens.Home.name
@@ -111,8 +118,21 @@ class MainActivity : ComponentActivity() {
                                 SettingsScreen(navController)
                             }
                             composable(route = com.example.bouldering_tracker.AppScreens.CreateSession.name){
-                                CreateSessionScreen(navController)
+                                CreateSessionScreen(sessionsData, navController)
                             }
+                            composable(route = com.example.bouldering_tracker.AppScreens.AddClimb.name){
+                                AddClimbScreen(navController)
+                            }
+                            /*composable(
+                                route = AppScreens.EditClimb.name + "/{climbIndex}",
+                                arguments = listOf(navArgument("climbIndex") { type = NavType.IntType })
+                            ) { backStackEntry ->
+                                EditClimbScreen(
+                                    climbsData,
+                                    climbIndex = backStackEntry.arguments?.getInt("climbIndex") ?: 0,
+                                    navController
+                                )
+                            }*/
                         }
                     }
                 }
