@@ -33,6 +33,8 @@ import androidx.navigation.NavHostController
 import com.example.bouldering_tracker.AppScreens
 import com.example.bouldering_tracker.Climb
 import com.example.bouldering_tracker.ClimbStatus
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @Composable
 fun SessionInfoScreen(viewModel: SessionViewModel, sessionIndex: Int, navController: NavHostController, modifier:Modifier = Modifier){
@@ -72,7 +74,7 @@ fun SessionInfoScreen(viewModel: SessionViewModel, sessionIndex: Int, navControl
                 fontWeight = FontWeight.Bold,
             )
             Text(
-                text = sessionsData[sessionIndex].date,
+                text = SimpleDateFormat("dd/MM/yy", Locale.getDefault()).format(sessionsData[sessionIndex].date),
             )
         }
         // Duration

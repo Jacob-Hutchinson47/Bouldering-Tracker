@@ -51,19 +51,33 @@ import java.util.Locale
 fun CreateSessionScreen(viewModel: SessionViewModel, navController: NavHostController, modifier:Modifier = Modifier){
     val draftSession by viewModel.draftSession.collectAsState()
 
-    var location by rememberSaveable {mutableStateOf("The Climbing Station")}
+    var location by rememberSaveable {mutableStateOf(draftSession.location)}
+
+    var selectedDate by remember { mutableStateOf(draftSession.date) }
 
     var showDatePicker by remember {mutableStateOf(false)}
     val today = SimpleDateFormat("dd/MM/yy", Locale.getDefault()).format(Date())
     var selectedDateText by rememberSaveable {mutableStateOf(today)}
 
     var showDurationPicker by remember { mutableStateOf(false) }
-    var durationText by rememberSaveable { mutableStateOf("0h 0m") }
+    var durationText by rememberSaveable { mutableStateOf(draftSession.duration) }
     val durationState = rememberTimePickerState(
         initialHour = 0,
         initialMinute = 0,
         is24Hour = true // Use 24h to avoid AM/PM confusion for duration
     )
+
+    if (showDatePicker) {
+        DatePickerModalInput(
+            onDateSelected = { millis ->
+                if (millis != null) {
+                    selectedDate = Date(millis)
+                }
+                showDatePicker = false
+            },
+            onDismiss = { showDatePicker = false }
+        )
+    }
 
     Column (modifier=
         modifier
@@ -176,7 +190,7 @@ fun CreateSessionScreen(viewModel: SessionViewModel, navController: NavHostContr
             Button(
                 onClick = {
                     // Update the draft session with the values entered
-                    viewModel.updateDraftDetails(location, selectedDateText, durationText)
+                    viewModel.updateDraftDetails(location, selectedDate, durationText)
 
                     navController.navigate("${AppScreens.AddClimb.name}/-1")
                 },
@@ -243,7 +257,7 @@ fun CreateSessionScreen(viewModel: SessionViewModel, navController: NavHostContr
 
         Button(
             onClick = {
-                viewModel.updateDraftDetails(location, selectedDateText, durationText)
+                viewModel.updateDraftDetails(location, selectedDate, durationText)
                 viewModel.saveDraftAsNewSession()
                 navController.popBackStack() // Go back to home screen
             },

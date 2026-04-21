@@ -25,6 +25,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.bouldering_tracker.ui.SessionViewModel
+import java.text.SimpleDateFormat
 
 @Composable
 fun ClimbInfoScreen(viewModel: SessionViewModel, sessionIndex: Int, climbIndex: Int, navController: NavHostController, modifier:Modifier = Modifier){
@@ -84,7 +86,7 @@ fun ClimbInfoScreen(viewModel: SessionViewModel, sessionIndex: Int, climbIndex: 
                 fontWeight = FontWeight.Bold,
             )
             Text(
-                text = sessionsData[sessionIndex].date,
+                text = SimpleDateFormat("dd/MM/yyyy").format(sessionsData[sessionIndex].date)
             )
         }
         // Attempts
