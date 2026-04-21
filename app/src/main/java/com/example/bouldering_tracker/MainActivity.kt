@@ -23,6 +23,7 @@ import com.example.bouldering_tracker.ui.CreateSessionScreen
 import com.example.bouldering_tracker.ui.HomeScreen
 import com.example.bouldering_tracker.ui.SessionInfoScreen
 import com.example.bouldering_tracker.ui.SessionViewModel
+import com.example.bouldering_tracker.ui.SettingViewModel
 import com.example.bouldering_tracker.ui.SettingsScreen
 import com.example.bouldering_tracker.ui.StatsScreen
 import com.example.bouldering_tracker.ui.theme.BoulderingTrackerTheme
@@ -40,6 +41,7 @@ class MainActivity : ComponentActivity() {
                     ) {
                         val navController: NavHostController = rememberNavController()
                         val viewModel: SessionViewModel = viewModel()
+                        val settingViewModel: SettingViewModel = viewModel()
 
                         NavHost(
                             navController = navController,
@@ -86,10 +88,10 @@ class MainActivity : ComponentActivity() {
                                 StatsScreen(viewModel, navController)
                             }
                             composable(route = com.example.bouldering_tracker.AppScreens.Settings.name){
-                                SettingsScreen(navController)
+                                SettingsScreen(settingViewModel, navController)
                             }
                             composable(route = com.example.bouldering_tracker.AppScreens.CreateSession.name){
-                                CreateSessionScreen(viewModel, navController)
+                                CreateSessionScreen(viewModel, settingViewModel, navController)
                             }
                             composable(
                                 route = "${AppScreens.AddClimb.name}/{sessionIndex}",

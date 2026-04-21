@@ -52,12 +52,8 @@ class SessionViewModel : ViewModel() {
     ))
     val sessionsData = _sessionsData.asStateFlow()
 
-    private val _draftSession = MutableStateFlow(Session("The Climbing Station", Date(), "0h0m", mutableListOf()))
+    private val _draftSession = MutableStateFlow(Session("", Date(), "0h0m", mutableListOf()))
     val draftSession = _draftSession.asStateFlow()
-
-    fun addSession(newSession: Session) {
-        _sessionsData.value = _sessionsData.value + newSession
-    }
 
     fun updateDraftDetails(location: String, date: Date, duration: String) {
         _draftSession.value = _draftSession.value.copy(

@@ -28,8 +28,10 @@ import androidx.compose.material3.TimeInput
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -39,6 +41,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.bouldering_tracker.AppScreens
 import com.example.bouldering_tracker.Session
@@ -48,10 +51,18 @@ import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateSessionScreen(viewModel: SessionViewModel, navController: NavHostController, modifier:Modifier = Modifier){
+fun CreateSessionScreen(viewModel: SessionViewModel, settingViewModel: SettingViewModel = viewModel(), navController: NavHostController, modifier:Modifier = Modifier){
     val draftSession by viewModel.draftSession.collectAsState()
+    val defaultLocation by settingViewModel.location.observeAsState("")
 
     var location by rememberSaveable {mutableStateOf(draftSession.location)}
+
+    // Update the location when the location is finished reading from the disk
+    LaunchedEffect(defaultLocation) {
+        if (location.isEmpty() && defaultLocation.isNotEmpty()) {
+            location = defaultLocation
+        }
+    }
 
     var selectedDate by remember { mutableStateOf(draftSession.date) }
 
