@@ -1,8 +1,6 @@
-package com.example.bouldering_tracker
+package com.example.bouldering_tracker.ui
 
 import android.content.Intent
-import android.net.Uri
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -21,6 +19,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,9 +31,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.bouldering_tracker.ClimbStatus
 
 @Composable
-fun StatsScreen(sessionsData:List<Session>, navController: NavHostController, modifier:Modifier = Modifier){
+fun StatsScreen(viewModel: SessionViewModel, navController: NavHostController, modifier:Modifier = Modifier){
+    val sessionsData by viewModel.sessionsData.collectAsState()
+
     val context = LocalContext.current
 
     val favoriteLocationEntry = sessionsData.groupBy { it.location }.maxByOrNull { it.value.size }

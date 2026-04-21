@@ -10,12 +10,21 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.bouldering_tracker.ui.AddClimbScreen
+import com.example.bouldering_tracker.ui.ClimbInfoScreen
+import com.example.bouldering_tracker.ui.CreateSessionScreen
+import com.example.bouldering_tracker.ui.HomeScreen
+import com.example.bouldering_tracker.ui.SessionInfoScreen
+import com.example.bouldering_tracker.ui.SessionViewModel
+import com.example.bouldering_tracker.ui.SettingsScreen
+import com.example.bouldering_tracker.ui.StatsScreen
 import com.example.bouldering_tracker.ui.theme.BoulderingTrackerTheme
 
 class MainActivity : ComponentActivity() {
@@ -30,46 +39,7 @@ class MainActivity : ComponentActivity() {
                         color = MaterialTheme.colorScheme.background
                     ) {
                         val navController: NavHostController = rememberNavController()
-                        val sessionsData: MutableList<Session> = mutableListOf(
-                            Session("The Climbing Station", "13/03/26", "1h 45m", mutableListOf(
-                                Climb(3, "Red", 2, ClimbStatus.Sent, "Just go up"),
-                                Climb(4, "Green", 3, ClimbStatus.Flashed, "Don't fall off")
-                            )),
-                            Session("The Climbing Station", "08/03/26", "2h", mutableListOf()),
-
-                            // New Data Starts Here
-                            Session("Big Rock Hub", "20/03/26", "2h 15m", mutableListOf(
-                                Climb(2, "Blue", 1, ClimbStatus.Flashed, "Warm up"),
-                                Climb(4, "Black", 5, ClimbStatus.Sent, "Hard crimpy move at the top"),
-                                Climb(5, "Yellow", 8, ClimbStatus.Project, "Need more finger strength for the start")
-                            )),
-                            Session("The Depot", "27/03/26", "1h 30m", mutableListOf(
-                                Climb(3, "Purple", 2, ClimbStatus.Sent, "Nice slab"),
-                                Climb(3, "Purple", 1, ClimbStatus.Flashed, "Easy dynamic move"),
-                                Climb(4, "White", 4, ClimbStatus.Sent, "Technical footwork required")
-                            )),
-                            Session("Big Rock Hub", "02/04/26", "2h", mutableListOf(
-                                Climb(4, "Green", 2, ClimbStatus.Sent, "Repeat from last time"),
-                                Climb(5, "Yellow", 10, ClimbStatus.Sent, "FINALLY SENT IT!"),
-                                Climb(6, "Orange", 3, ClimbStatus.Project, "New highest grade attempt")
-                            )),
-                            Session("The Climbing Station", "05/04/26", "1h 10m", mutableListOf(
-                                Climb(3, "Red", 1, ClimbStatus.Flashed, "Quick session"),
-                                Climb(4, "Green", 2, ClimbStatus.Sent, "Feeling strong")
-                            )),
-                            Session("Flashpoint", "10/04/26", "2h 30m", mutableListOf(
-                                Climb(2, "Blue", 1, ClimbStatus.Flashed, "Good reset"),
-                                Climb(3, "Red", 1, ClimbStatus.Flashed, "Soft for the grade"),
-                                Climb(4, "Black", 6, ClimbStatus.Sent, "Burly overhang"),
-                                Climb(5, "Yellow", 4, ClimbStatus.Project, "Pumped out at the end")
-                            ))
-                        )
-
-                        /*var climbsData = listOf(
-                            Climb(2, "Blue", 1, ClimbStatus.Flashed, "Good reset"),
-                            Climb(3, "Red", 1, ClimbStatus.Flashed, "Soft for the grade"),
-                            Climb(4, "Black", 6, ClimbStatus.Sent, "Burly overhang"),
-                            Climb(5, "Yellow", 4, ClimbStatus.Project, "Pumped out at the end"))*/
+                        val viewModel: SessionViewModel = viewModel()
 
                         NavHost(
                             navController = navController,
@@ -77,15 +47,16 @@ class MainActivity : ComponentActivity() {
                         ){
                             //call the composable() function once for each of the routes
                             composable(route = com.example.bouldering_tracker.AppScreens.Home.name){
-                                HomeScreen(sessionsData, navController)
+                                HomeScreen(viewModel, navController)
                             }
                             composable(
                                 route = AppScreens.SessionInfo.name + "/{sessionIndex}",
                                 arguments = listOf(navArgument("sessionIndex") { type = NavType.IntType })
                             ) { backStackEntry ->
                                 SessionInfoScreen(
-                                    sessionsData,
-                                    sessionIndex = backStackEntry.arguments?.getInt("sessionIndex") ?: 0,
+                                    viewModel,
+                                    sessionIndex = backStackEntry.arguments?.getInt("sessionIndex")
+                                        ?: 0,
                                     navController
                                 )
                             }
@@ -105,23 +76,27 @@ class MainActivity : ComponentActivity() {
                                 val climbIndex = backStackEntry.arguments?.getInt("climbIndex") ?: 0
 
                                 ClimbInfoScreen(
-                                    sessionsData,
+                                    viewModel,
                                     sessionIndex = sessionIndex,
                                     climbIndex = climbIndex,
                                     navController
                                 )
                             }
                             composable(route = com.example.bouldering_tracker.AppScreens.Stats.name){
-                                StatsScreen(sessionsData, navController)
+                                StatsScreen(viewModel, navController)
                             }
                             composable(route = com.example.bouldering_tracker.AppScreens.Settings.name){
                                 SettingsScreen(navController)
                             }
                             composable(route = com.example.bouldering_tracker.AppScreens.CreateSession.name){
-                                CreateSessionScreen(sessionsData, navController)
+                                CreateSessionScreen(viewModel, navController)
                             }
-                            composable(route = com.example.bouldering_tracker.AppScreens.AddClimb.name){
-                                AddClimbScreen(navController)
+                            composable(
+                                route = "${AppScreens.AddClimb.name}/{sessionIndex}",
+                                arguments = listOf(navArgument("sessionIndex") { type = NavType.IntType })
+                            ) { backStackEntry ->
+                                val sessionIndex = backStackEntry.arguments?.getInt("sessionIndex") ?: 0
+                                AddClimbScreen(viewModel, sessionIndex, navController)
                             }
                             /*composable(
                                 route = AppScreens.EditClimb.name + "/{climbIndex}",
@@ -146,6 +121,7 @@ enum class AppScreens{
     SessionInfo, //AppScreens.SessionInfo.name
     ClimbInfo, //AppScreens.ClimbInfo.name
     CreateSession, //AppScreens.CreateSession.name
+    EditSession, //AppScreens.EditSession.name
     AddClimb, //AppScreens.AddClimb.name
     Stats, //AppScreens.Stats.name
     Settings, //AppScreens.Settings.name

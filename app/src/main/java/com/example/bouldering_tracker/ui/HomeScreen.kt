@@ -1,4 +1,4 @@
-package com.example.bouldering_tracker
+package com.example.bouldering_tracker.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -14,15 +14,20 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.bouldering_tracker.Session
 
 @Composable
-fun HomeScreen(sessionsData: List<Session>, navController: NavHostController, modifier: Modifier = Modifier) {
+fun HomeScreen(viewModel: SessionViewModel, navController: NavHostController, modifier: Modifier = Modifier) {
+    val sessionsData by viewModel.sessionsData.collectAsState()
+
     Column (modifier=
         modifier.padding(16.dp)//add padding all around
     ){

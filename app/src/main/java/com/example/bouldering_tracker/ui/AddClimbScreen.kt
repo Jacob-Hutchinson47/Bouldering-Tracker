@@ -1,4 +1,4 @@
-package com.example.bouldering_tracker
+package com.example.bouldering_tracker.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
@@ -19,8 +18,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,7 +27,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -36,9 +34,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.bouldering_tracker.Climb
+import com.example.bouldering_tracker.ClimbStatus
 
 @Composable
-fun AddClimbScreen(navController: NavHostController, modifier:Modifier = Modifier) {
+fun AddClimbScreen(viewModel: SessionViewModel, sessionIndex: Int, navController: NavHostController, modifier:Modifier = Modifier) {
+    val sessionsData by viewModel.sessionsData.collectAsState()
+
     var grade by rememberSaveable {mutableStateOf("")}
 
     var colour by rememberSaveable {mutableStateOf("")}
@@ -170,13 +172,21 @@ fun AddClimbScreen(navController: NavHostController, modifier:Modifier = Modifie
 
         Button(
             onClick = {
-                //TODO
-                /*newSession.climbs.add(Climb(grade.toInt(),
-                    colour, attempts.toInt(),
-                    ClimbStatus.valueOf(selectedOption),
-                    notes))
-                navController.popBackStack() // Go back to create session screen
-                 */
+                val newClimb = Climb(
+                    grade = grade.toIntOrNull() ?: 0,
+                    colour = colour,
+                    attempts = attempts.toIntOrNull() ?: 1,
+                    status = ClimbStatus.valueOf(selectedOption),
+                    note = notes // This fixes your "No value passed" error
+                )
+
+                if (sessionIndex == -1) {
+                    viewModel.addClimbToDraft(newClimb) // New session
+                } else {
+                    viewModel.addClimbToSession(sessionIndex, newClimb) // Existing session
+                }
+
+                navController.popBackStack()
             },
             modifier = Modifier
                 .fillMaxWidth()

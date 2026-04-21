@@ -1,4 +1,4 @@
-package com.example.bouldering_tracker
+package com.example.bouldering_tracker.ui
 
 import android.content.Intent
 import android.net.Uri
@@ -16,6 +16,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -25,7 +27,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 
 @Composable
-fun ClimbInfoScreen(sessionsData:List<Session>, sessionIndex: Int, climbIndex: Int, navController: NavHostController, modifier:Modifier = Modifier){
+fun ClimbInfoScreen(viewModel: SessionViewModel, sessionIndex: Int, climbIndex: Int, navController: NavHostController, modifier:Modifier = Modifier){
+    val sessionsData by viewModel.sessionsData.collectAsState()
+
     val context = LocalContext.current
     Column (modifier=
         modifier.padding(16.dp)//add padding all around

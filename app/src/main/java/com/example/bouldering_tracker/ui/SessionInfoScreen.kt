@@ -1,4 +1,4 @@
-package com.example.bouldering_tracker
+package com.example.bouldering_tracker.ui
 
 import android.content.Intent
 import android.net.Uri
@@ -21,17 +21,23 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavHostController
+import com.example.bouldering_tracker.AppScreens
+import com.example.bouldering_tracker.Climb
+import com.example.bouldering_tracker.ClimbStatus
 
 @Composable
-fun SessionInfoScreen(sessionsData:List<Session>, sessionIndex: Int, navController: NavHostController, modifier:Modifier = Modifier){
+fun SessionInfoScreen(viewModel: SessionViewModel, sessionIndex: Int, navController: NavHostController, modifier:Modifier = Modifier){
+    val sessionsData by viewModel.sessionsData.collectAsState()
+
     val context = LocalContext.current
     Column (modifier=
         modifier.padding(16.dp)//add padding all around

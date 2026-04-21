@@ -1,4 +1,4 @@
-package com.example.bouldering_tracker
+package com.example.bouldering_tracker.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -27,6 +28,7 @@ import androidx.compose.material3.TimeInput
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,16 +40,21 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.bouldering_tracker.AppScreens
+import com.example.bouldering_tracker.Session
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateSessionScreen(sessions: MutableList<Session>, navController: NavHostController, modifier:Modifier = Modifier){
-    var newSession = Session("", "", "", mutableListOf())
+fun CreateSessionScreen(viewModel: SessionViewModel, navController: NavHostController, modifier:Modifier = Modifier){
+    val draftSession by viewModel.draftSession.collectAsState()
 
     var location by rememberSaveable {mutableStateOf("The Climbing Station")}
 
     var showDatePicker by remember {mutableStateOf(false)}
-    val today = java.text.SimpleDateFormat("dd/MM/yy", java.util.Locale.getDefault()).format(java.util.Date())
+    val today = SimpleDateFormat("dd/MM/yy", Locale.getDefault()).format(Date())
     var selectedDateText by rememberSaveable {mutableStateOf(today)}
 
     var showDurationPicker by remember { mutableStateOf(false) }
@@ -114,10 +121,10 @@ fun CreateSessionScreen(sessions: MutableList<Session>, navController: NavHostCo
                     onDateSelected = { millis ->
                         if (millis != null) {
                             // Convert milliseconds to a readable date string
-                            val date = java.util.Date(millis)
-                            val formatter = java.text.SimpleDateFormat(
+                            val date = Date(millis)
+                            val formatter = SimpleDateFormat(
                                 "dd/MM/yy",
-                                java.util.Locale.getDefault()
+                                Locale.getDefault()
                             )
                             selectedDateText = formatter.format(date)
                         }
@@ -144,8 +151,8 @@ fun CreateSessionScreen(sessions: MutableList<Session>, navController: NavHostCo
             DatePickerModalInput(
                 onDateSelected = { millis ->
                     millis?.let {
-                        val formatter = java.text.SimpleDateFormat("dd/MM/yy", java.util.Locale.getDefault())
-                        selectedDateText = formatter.format(java.util.Date(it))
+                        val formatter = SimpleDateFormat("dd/MM/yy", Locale.getDefault())
+                        selectedDateText = formatter.format(Date(it))
                     }
                     showDatePicker = false
                 },
@@ -168,7 +175,10 @@ fun CreateSessionScreen(sessions: MutableList<Session>, navController: NavHostCo
         Row () {
             Button(
                 onClick = {
-                    navController.navigate(route = "AddClimb")
+                    // Update the draft session with the values entered
+                    viewModel.updateDraftDetails(location, selectedDateText, durationText)
+
+                    navController.navigate("${AppScreens.AddClimb.name}/-1")
                 },
                 modifier
                     .weight(1f, true)
@@ -185,13 +195,13 @@ fun CreateSessionScreen(sessions: MutableList<Session>, navController: NavHostCo
             fontWeight = FontWeight.Bold,
             modifier =  Modifier.padding(8.dp)
         )
-        if (newSession.climbs.count() > 0) {
+        if (draftSession.climbs.count() > 0) {
             LazyColumn (
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth()
             ) {
-                itemsIndexed(newSession.climbs) {//iterate through each climb in the List and create a Card for each climb
+                itemsIndexed(draftSession.climbs) {//iterate through each climb in the List and create a Card for each climb
                         climbIndex, climb ->
                     Card(
                         colors = CardDefaults.cardColors(
@@ -233,10 +243,8 @@ fun CreateSessionScreen(sessions: MutableList<Session>, navController: NavHostCo
 
         Button(
             onClick = {
-                newSession.location = location
-                newSession.date = selectedDateText
-                newSession.duration = durationText
-                sessions.add(newSession)
+                viewModel.updateDraftDetails(location, selectedDateText, durationText)
+                viewModel.saveDraftAsNewSession()
                 navController.popBackStack() // Go back to home screen
             },
             modifier = Modifier
@@ -255,15 +263,15 @@ fun DurationPickerDialog(
     onConfirm: () -> Unit,
     content: @Composable () -> Unit
 ) {
-    androidx.compose.material3.AlertDialog(
+    AlertDialog(
         onDismissRequest = onDismissRequest,
         confirmButton = {
-            androidx.compose.material3.TextButton(onClick = onConfirm) {
+            TextButton(onClick = onConfirm) {
                 Text("OK")
             }
         },
         dismissButton = {
-            androidx.compose.material3.TextButton(onClick = onDismissRequest) {
+            TextButton(onClick = onDismissRequest) {
                 Text("Cancel")
             }
         },
