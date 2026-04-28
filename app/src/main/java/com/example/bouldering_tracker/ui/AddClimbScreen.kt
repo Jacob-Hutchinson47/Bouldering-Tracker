@@ -21,6 +21,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -34,13 +35,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.bouldering_tracker.Climb
-import com.example.bouldering_tracker.ClimbStatus
+import com.example.bouldering_tracker.data.Climb
+import com.example.bouldering_tracker.data.ClimbStatus
 
 @Composable
 fun AddClimbScreen(viewModel: SessionViewModel, sessionIndex: Int, navController: NavHostController, modifier:Modifier = Modifier) {
-    val sessionsData by viewModel.sessionsData.collectAsState()
-
     var grade by rememberSaveable {mutableStateOf("")}
 
     var colour by rememberSaveable {mutableStateOf("")}
@@ -177,7 +176,7 @@ fun AddClimbScreen(viewModel: SessionViewModel, sessionIndex: Int, navController
                     colour = colour,
                     attempts = attempts.toIntOrNull() ?: 1,
                     status = ClimbStatus.valueOf(selectedOption),
-                    note = notes // This fixes your "No value passed" error
+                    note = notes
                 )
 
                 if (sessionIndex == -1) {

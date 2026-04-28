@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -30,7 +31,7 @@ import java.text.SimpleDateFormat
 
 @Composable
 fun ClimbInfoScreen(viewModel: SessionViewModel, sessionIndex: Int, climbIndex: Int, navController: NavHostController, modifier:Modifier = Modifier){
-    val sessionsData by viewModel.sessionsData.collectAsState()
+    val sessionsData by viewModel.sessionsData.observeAsState(initial = emptyList())
 
     val context = LocalContext.current
     Column (modifier=

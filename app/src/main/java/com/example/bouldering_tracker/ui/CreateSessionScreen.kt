@@ -44,7 +44,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.bouldering_tracker.AppScreens
-import com.example.bouldering_tracker.Session
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -234,10 +233,10 @@ fun CreateSessionScreen(viewModel: SessionViewModel, settingViewModel: SettingVi
                         ),
                         modifier = Modifier
                             .padding(4.dp).fillMaxWidth(1f)
-                            /*.clickable(
-                                onClick = { //handle the onClick event to the list item
-                                    navController.navigate(route = "EditClimb/$climbIndex")
-                                })*/
+                        /*.clickable(
+                            onClick = { //handle the onClick event to the list item
+                                navController.navigate(route = "EditClimb/$climbIndex")
+                            })*/
                     ) {
                         Text(
                             text = "V" + climb.grade + " - " + climb.colour + " Holds",

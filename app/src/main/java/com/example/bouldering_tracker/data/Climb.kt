@@ -1,4 +1,4 @@
-package com.example.bouldering_tracker
+package com.example.bouldering_tracker.data
 
 data class Climb(
     var grade: Int,

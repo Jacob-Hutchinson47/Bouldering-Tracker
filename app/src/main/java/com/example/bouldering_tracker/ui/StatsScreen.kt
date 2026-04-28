@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,11 +32,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.bouldering_tracker.ClimbStatus
+import com.example.bouldering_tracker.data.ClimbStatus
 
 @Composable
 fun StatsScreen(viewModel: SessionViewModel, navController: NavHostController, modifier:Modifier = Modifier){
-    val sessionsData by viewModel.sessionsData.collectAsState()
+    val sessionsData by viewModel.sessionsData.observeAsState(initial = emptyList())
 
     val context = LocalContext.current
 
@@ -165,7 +166,7 @@ fun StatsScreen(viewModel: SessionViewModel, navController: NavHostController, m
                 }
                 val shareIntent = Intent.createChooser(sendIntent, "Share Session via")
                 context.startActivity(shareIntent)
-                      },
+            },
             modifier = Modifier.padding(8.dp)
         ) {
             Icon(imageVector = Icons.Default.Share, contentDescription = null)

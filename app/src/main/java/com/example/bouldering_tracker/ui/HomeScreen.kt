@@ -16,19 +16,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.bouldering_tracker.Session
+import com.example.bouldering_tracker.data.Session
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 @Composable
 fun HomeScreen(viewModel: SessionViewModel, navController: NavHostController, modifier: Modifier = Modifier) {
-    val sessionsData by viewModel.sessionsData.collectAsState()
+    val sessionsData by viewModel.sessionsData.observeAsState(initial = emptyList())
 
     Column (modifier=
         modifier.padding(16.dp)//add padding all around
