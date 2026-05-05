@@ -29,6 +29,14 @@ class SettingViewModel(application: Application) : AndroidViewModel(application)
     fun saveReminderSettings(enabled: Boolean, hour: Int, minute: Int) {
         viewModelScope.launch {
             preferenceManager.saveReminderSettings(enabled, hour, minute)
+
+            val context = getApplication<Application>().applicationContext
+
+            if (enabled) {
+                ReminderScheduler.scheduleReminder(context, hour, minute)
+            } else {
+                ReminderScheduler.cancelReminder(context)
+            }
         }
     }
 }

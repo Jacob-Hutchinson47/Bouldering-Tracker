@@ -1,5 +1,13 @@
 package com.example.bouldering_tracker.ui
 
+import android.annotation.SuppressLint
+import android.app.AlarmManager
+import android.content.Context
+import android.content.Intent
+import android.os.Build
+import android.provider.Settings
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -36,6 +45,9 @@ import androidx.navigation.NavHostController
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(settingViewModel: SettingViewModel = viewModel(), navController: NavHostController, modifier:Modifier = Modifier){
+    val context = LocalContext.current
+    val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
     val location by settingViewModel.location.observeAsState("")
     val remindersEnabled by settingViewModel.remindersEnabled.observeAsState(true)
     val savedHour by settingViewModel.reminderHour.observeAsState(16)
@@ -57,6 +69,15 @@ fun SettingsScreen(settingViewModel: SettingViewModel = viewModel(), navControll
         initialMinute = savedMinute,
         is24Hour = true,
     )
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (!isGranted) {
+            // If denied turn the toggle back to off in the DataStore
+            settingViewModel.saveReminderSettings(false, savedHour, savedMinute)
+        }
+    }
 
     Column (modifier=
         modifier.padding(16.dp)//add padding all around
@@ -100,7 +121,24 @@ fun SettingsScreen(settingViewModel: SettingViewModel = viewModel(), navControll
             Switch(
                 checked = remindersEnabled,
                 onCheckedChange = { isChecked ->
-                    settingViewModel.saveReminderSettings(isChecked, savedHour, savedMinute)
+                    if (isChecked) {
+                        // 1. Check Exact Alarm Permission (Android 12+)[cite: 6, 8]
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
+                            val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
+                            context.startActivity(intent)
+                            // We return early because we want the user to grant permission first
+                            return@Switch
+                        }
+
+                        // 2. Check Notification Permission (Android 13+)[cite: 6, 8]
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            permissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                        }
+
+                        settingViewModel.saveReminderSettings(true, savedHour, savedMinute)
+                    } else {
+                        settingViewModel.saveReminderSettings(false, savedHour, savedMinute)
+                    }
                 }
             )
             Text(
