@@ -15,7 +15,6 @@ class SettingsPreferenceManager(private val context: Context) {
     companion object {
         private val LOCATION_KEY = stringPreferencesKey("location")
 
-        // Define new keys[cite: 3]
         private val REMINDERS_ENABLED_KEY = booleanPreferencesKey("reminders_enabled")
         private val REMINDER_HOUR_KEY = intPreferencesKey("reminder_hour")
         private val REMINDER_MINUTE_KEY = intPreferencesKey("reminder_minute")
@@ -23,7 +22,6 @@ class SettingsPreferenceManager(private val context: Context) {
 
     val locationFlow: Flow<String?> = context.dataStore.data
         .map {preferences ->
-            // Retrieve the location value, returning null if not set
             preferences[LOCATION_KEY]
         }
 
@@ -38,7 +36,6 @@ class SettingsPreferenceManager(private val context: Context) {
 
     suspend fun saveLocation(location: String) {
         context.dataStore.edit { preferences ->
-            // Save the location in DataStore
             preferences[LOCATION_KEY] = location
         }
     }

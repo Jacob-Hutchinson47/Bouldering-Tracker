@@ -7,8 +7,8 @@ class SessionsRepository(private val sessionsDao: SessionsDao) {
     suspend fun insertSession(session:Session){
         sessionsDao.insert(session)
     }
-    suspend fun deleteSession(){
-        sessionsDao.deleteAll()
+    suspend fun deleteSession(session: Session) {
+        sessionsDao.delete(session)
     }
     suspend fun updateSession(session: Session) {
         sessionsDao.update(session)

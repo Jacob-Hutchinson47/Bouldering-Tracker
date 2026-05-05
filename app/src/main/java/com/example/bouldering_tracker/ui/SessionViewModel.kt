@@ -74,4 +74,32 @@ class SessionViewModel(application: Application) : AndroidViewModel(application)
             }
         }
     }
+
+    fun deleteSession(session: Session) {
+        viewModelScope.launch {
+            sessionsRepository.deleteSession(session)
+        }
+    }
+
+    fun deleteClimb(session: Session, climbIndex: Int) {
+        viewModelScope.launch {
+            val updatedClimbs = session.climbs.toMutableList()
+
+            if (climbIndex in updatedClimbs.indices) {
+                updatedClimbs.removeAt(climbIndex)
+
+                val updatedSession = session.copy(climbs = updatedClimbs)
+
+                sessionsRepository.updateSession(updatedSession)
+            }
+        }
+    }
+
+    fun deleteClimbFromDraft(index: Int) {
+        val updatedClimbs = _draftSession.value.climbs.toMutableList()
+        if (index in updatedClimbs.indices) {
+            updatedClimbs.removeAt(index)
+            _draftSession.value = _draftSession.value.copy(climbs = updatedClimbs)
+        }
+    }
 }

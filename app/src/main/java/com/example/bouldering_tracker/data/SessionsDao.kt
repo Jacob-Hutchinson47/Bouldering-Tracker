@@ -2,6 +2,7 @@ package com.example.bouldering_tracker.data
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -25,4 +26,7 @@ interface SessionsDao {
 
     @Query("SELECT * FROM sessions WHERE id = :id")
     suspend fun getSessionById(id: Int): Session?
+
+    @Delete
+    suspend fun delete(session: Session)
 }

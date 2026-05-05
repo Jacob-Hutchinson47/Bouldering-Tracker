@@ -122,15 +122,12 @@ fun SettingsScreen(settingViewModel: SettingViewModel = viewModel(), navControll
                 checked = remindersEnabled,
                 onCheckedChange = { isChecked ->
                     if (isChecked) {
-                        // 1. Check Exact Alarm Permission (Android 12+)[cite: 6, 8]
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
                             val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
                             context.startActivity(intent)
-                            // We return early because we want the user to grant permission first
                             return@Switch
                         }
 
-                        // 2. Check Notification Permission (Android 13+)[cite: 6, 8]
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                             permissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
                         }

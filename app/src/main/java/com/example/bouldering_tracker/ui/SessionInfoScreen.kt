@@ -3,15 +3,19 @@ package com.example.bouldering_tracker.ui
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
@@ -19,11 +23,15 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -34,12 +42,17 @@ import androidx.navigation.NavHostController
 import com.example.bouldering_tracker.AppScreens
 import com.example.bouldering_tracker.data.Climb
 import com.example.bouldering_tracker.data.ClimbStatus
+import com.example.bouldering_tracker.data.Session
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 @Composable
 fun SessionInfoScreen(viewModel: SessionViewModel, sessionIndex: Int, navController: NavHostController, modifier:Modifier = Modifier){
     val sessionsData by viewModel.sessionsData.observeAsState(initial = emptyList())
+
+    if (sessionsData.isEmpty() || sessionIndex !in sessionsData.indices) return
+
+    val currentSession = sessionsData[sessionIndex]
 
     val context = LocalContext.current
     Column (modifier=
@@ -184,46 +197,76 @@ fun SessionInfoScreen(viewModel: SessionViewModel, sessionIndex: Int, navControl
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(8.dp)
         )
-        ClimbsList(sessionsData[sessionIndex].climbs, sessionIndex, navController)
+        ClimbsList(viewModel, currentSession, sessionIndex, navController)
     }
 }
 
 @Composable
 fun ClimbsList(
-    climbs: List<Climb>,
-    sessionIndex: Int, // Add this parameter
+    viewModel: SessionViewModel,
+    session: Session,
+    sessionIndex: Int,
     navController: NavHostController,
 ) {
-    if (climbs.count() > 0) {
+    if (session.climbs.isNotEmpty()) {
         LazyColumn {
-            itemsIndexed(climbs) {//iterate through each climb in the List and create a Card for each climb
-                    climbIndex, climb ->
-                Card(
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                    ),
-                    modifier = Modifier
-                        .padding(4.dp).fillMaxWidth(1f)
-                        .clickable(
-                            onClick = { //handle the onClick event to the list item
-                                navController.navigate("${AppScreens.ClimbInfo.name}/$sessionIndex/$climbIndex")
-                            })
+            itemsIndexed(
+                items = session.climbs,
+                key = { _, climb -> "${climb.grade}-${climb.colour}-${climb.attempts}-${climb.status}" }
+            ) { climbIndex, climb ->
+                val dismissState = rememberSwipeToDismissBoxState(
+                    confirmValueChange = {
+                        if (it == SwipeToDismissBoxValue.EndToStart) {
+                            viewModel.deleteClimb(session, climbIndex)
+                            true
+                        } else {
+                            false
+                        }
+                    }
+                )
+
+                SwipeToDismissBox(
+                    state = dismissState,
+                    enableDismissFromStartToEnd = false, // Disable swiping right
+                    backgroundContent = {
+                        Box(
+                            Modifier
+                                .fillMaxSize()
+                                .padding(horizontal = 20.dp),
+                            contentAlignment = Alignment.CenterEnd
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = "Delete",
+                                tint = MaterialTheme.colorScheme.error // Red icon
+                            )
+                        }
+                    }
                 ) {
-                    Text(
-                        text = "V" + climb.grade + " - " + climb.colour + " Holds",
+                    Card(
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
                         modifier = Modifier
-                            .padding(start = 12.dp, top = 12.dp),
-                    )
-                    Text(
-                        text = "Attempts: " + climb.attempts,
-                        modifier = Modifier
-                            .padding(start = 12.dp),
-                    )
-                    Text(
-                        text = "Status: " + climb.status.name,
-                        modifier = Modifier
-                            .padding(start = 12.dp, bottom = 12.dp),
-                    )
+                            .padding(4.dp).fillMaxWidth()
+                            .clickable {
+                                navController.navigate("${AppScreens.ClimbInfo.name}/$sessionIndex/$climbIndex")
+                            }
+                    ) {
+                        Text(
+                            text = "V" + climb.grade + " - " + climb.colour + " Holds",
+                            modifier = Modifier
+                                .padding(start = 12.dp, top = 12.dp),
+                        )
+                        Text(
+                            text = "Attempts: " + climb.attempts,
+                            modifier = Modifier
+                                .padding(start = 12.dp),
+                        )
+                        Text(
+                            text = "Status: " + climb.status.name,
+                            modifier = Modifier
+                                .padding(start = 12.dp, bottom = 12.dp),
+                        )
+                    }
                 }
             }
         }
