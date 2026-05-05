@@ -37,6 +37,9 @@ import androidx.navigation.NavHostController
 @Composable
 fun SettingsScreen(settingViewModel: SettingViewModel = viewModel(), navController: NavHostController, modifier:Modifier = Modifier){
     val location by settingViewModel.location.observeAsState("")
+    val remindersEnabled by settingViewModel.remindersEnabled.observeAsState(true)
+    val savedHour by settingViewModel.reminderHour.observeAsState(16)
+    val savedMinute by settingViewModel.reminderMinute.observeAsState(0)
     var text by rememberSaveable {mutableStateOf (location)}
 
     // Update the default location textbox when the location is finished reading from the disk
@@ -47,13 +50,11 @@ fun SettingsScreen(settingViewModel: SettingViewModel = viewModel(), navControll
         }
     }
 
-    var sessionRemindersEnabled by remember {mutableStateOf(true)}
-
     var showTimePicker by remember {mutableStateOf(false)} // Track visibility of reminder time picker
 
     val timePickerState = rememberTimePickerState(
-        initialHour = 16,
-        initialMinute = 0,
+        initialHour = savedHour,
+        initialMinute = savedMinute,
         is24Hour = true,
     )
 
@@ -97,9 +98,9 @@ fun SettingsScreen(settingViewModel: SettingViewModel = viewModel(), navControll
         )
         Row() {
             Switch(
-                checked = sessionRemindersEnabled,
-                onCheckedChange = {
-                    sessionRemindersEnabled = it
+                checked = remindersEnabled,
+                onCheckedChange = { isChecked ->
+                    settingViewModel.saveReminderSettings(isChecked, savedHour, savedMinute)
                 }
             )
             Text(
@@ -117,7 +118,7 @@ fun SettingsScreen(settingViewModel: SettingViewModel = viewModel(), navControll
             modifier = Modifier.fillMaxWidth().padding(8.dp)
         ) {
             Text(
-                text = "${timePickerState.hour.toString().padStart(2, '0')}:${timePickerState.minute.toString().padStart(2, '0')}",
+                text = "${savedHour.toString().padStart(2, '0')}:${savedMinute.toString().padStart(2, '0')}",
                 modifier = Modifier.padding(16.dp),
                 fontSize = 18.sp
             )
@@ -125,7 +126,14 @@ fun SettingsScreen(settingViewModel: SettingViewModel = viewModel(), navControll
         if (showTimePicker) {
             TimePickerDialog(
                 onDismissRequest = { showTimePicker = false },
-                onConfirm = { showTimePicker = false }
+                onConfirm = {
+                    showTimePicker = false
+                    settingViewModel.saveReminderSettings(
+                        remindersEnabled,
+                        timePickerState.hour,
+                        timePickerState.minute
+                    )
+                }
             ) {
                 TimeInput(state = timePickerState)
             }

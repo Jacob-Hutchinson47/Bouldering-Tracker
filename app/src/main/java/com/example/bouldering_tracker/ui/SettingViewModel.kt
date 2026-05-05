@@ -5,20 +5,30 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.bouldering_tracker.data.LocationPreferenceManager
+import com.example.bouldering_tracker.data.SettingsPreferenceManager
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class SettingViewModel(application: Application) : AndroidViewModel(application) {
-    private val locationPreferenceManager = LocationPreferenceManager(application)
+    private val preferenceManager = SettingsPreferenceManager(application)
 
-    val location: LiveData<String> = locationPreferenceManager.locationFlow
+    val location: LiveData<String> = preferenceManager.locationFlow
         .map { it ?: "The Climbing Station" } // Provide a default value if null
         .asLiveData()
 
+    val remindersEnabled: LiveData<Boolean> = preferenceManager.remindersEnabledFlow.asLiveData()
+    val reminderHour: LiveData<Int> = preferenceManager.reminderHourFlow.asLiveData()
+    val reminderMinute: LiveData<Int> = preferenceManager.reminderMinuteFlow.asLiveData()
+
     fun saveLocation(newLocation: String) {
         viewModelScope.launch {
-            locationPreferenceManager.saveLocation(newLocation)
+            preferenceManager.saveLocation(newLocation)
+        }
+    }
+
+    fun saveReminderSettings(enabled: Boolean, hour: Int, minute: Int) {
+        viewModelScope.launch {
+            preferenceManager.saveReminderSettings(enabled, hour, minute)
         }
     }
 }
