@@ -20,6 +20,7 @@ import androidx.navigation.navArgument
 import com.example.bouldering_tracker.ui.AddClimbScreen
 import com.example.bouldering_tracker.ui.ClimbInfoScreen
 import com.example.bouldering_tracker.ui.CreateSessionScreen
+import com.example.bouldering_tracker.ui.EditSessionScreen
 import com.example.bouldering_tracker.ui.HomeScreen
 import com.example.bouldering_tracker.ui.SessionInfoScreen
 import com.example.bouldering_tracker.ui.SessionViewModel
@@ -94,11 +95,22 @@ class MainActivity : ComponentActivity() {
                                 CreateSessionScreen(viewModel, settingViewModel, navController)
                             }
                             composable(
-                                route = "${AppScreens.AddClimb.name}/{sessionIndex}",
+                                route = "${com.example.bouldering_tracker.AppScreens.AddClimb.name}/{sessionIndex}",
                                 arguments = listOf(navArgument("sessionIndex") { type = NavType.IntType })
                             ) { backStackEntry ->
                                 val sessionIndex = backStackEntry.arguments?.getInt("sessionIndex") ?: 0
                                 AddClimbScreen(viewModel, sessionIndex, navController)
+                            }
+                            composable(
+                                route = AppScreens.EditSession.name + "/{sessionIndex}",
+                                arguments = listOf(navArgument("sessionIndex") { type = NavType.IntType })
+                            ) { backStackEntry ->
+                                EditSessionScreen(
+                                    viewModel,
+                                    sessionIndex = backStackEntry.arguments?.getInt("sessionIndex")
+                                        ?: 0,
+                                    navController
+                                )
                             }
                             /*composable(
                                 route = AppScreens.EditClimb.name + "/{climbIndex}",
@@ -125,6 +137,7 @@ enum class AppScreens{
     CreateSession, //AppScreens.CreateSession.name
     EditSession, //AppScreens.EditSession.name
     AddClimb, //AppScreens.AddClimb.name
+    EditClimb, // AppScreens.EditClimb.name
     Stats, //AppScreens.Stats.name
     Settings, //AppScreens.Settings.name
 }

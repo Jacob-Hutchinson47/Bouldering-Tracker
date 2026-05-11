@@ -102,4 +102,16 @@ class SessionViewModel(application: Application) : AndroidViewModel(application)
             _draftSession.value = _draftSession.value.copy(climbs = updatedClimbs)
         }
     }
+
+    fun editSession(session: Session) {
+        viewModelScope.launch {
+            sessionsRepository.updateSession(session)
+        }
+    }
+
+    fun addClimbToSession(climb: Climb) {
+        val updatedClimbs = _draftSession.value.climbs.toMutableList()
+        updatedClimbs.add(climb)
+        _draftSession.value = _draftSession.value.copy(climbs = updatedClimbs)
+    }
 }

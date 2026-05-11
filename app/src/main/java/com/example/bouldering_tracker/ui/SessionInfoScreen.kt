@@ -225,24 +225,6 @@ fun ClimbsList(
                     }
                 )
 
-                SwipeToDismissBox(
-                    state = dismissState,
-                    enableDismissFromStartToEnd = false, // Disable swiping right
-                    backgroundContent = {
-                        Box(
-                            Modifier
-                                .fillMaxSize()
-                                .padding(horizontal = 20.dp),
-                            contentAlignment = Alignment.CenterEnd
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Delete,
-                                contentDescription = "Delete",
-                                tint = MaterialTheme.colorScheme.error // Red icon
-                            )
-                        }
-                    }
-                ) {
                     Card(
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
                         modifier = Modifier
@@ -267,7 +249,6 @@ fun ClimbsList(
                                 .padding(start = 12.dp, bottom = 12.dp),
                         )
                     }
-                }
             }
         }
     } else {

@@ -5,19 +5,24 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButtonDefaults.Icon
 import androidx.compose.material3.SwipeToDismissBox
@@ -146,27 +151,49 @@ fun SessionsList(viewModel: SessionViewModel, sessions:List<Session>, navControl
                                 navController.navigate("SessionInfo/$index")
                             }
                     ) {
-                        Text(
-                            text = SimpleDateFormat("dd/MM/yy", Locale.getDefault()).format(session.date),
-                            modifier = Modifier
-                                .padding(start = 12.dp, top = 12.dp),
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            text = "Location: " + session.location,
-                            modifier = Modifier
-                                .padding(start = 12.dp),
-                        )
-                        Text(
-                            text = "Duration: " + session.duration,
-                            modifier = Modifier
-                                .padding(start = 12.dp),
-                        )
-                        Text(
-                            text = "Problems Climbed: " + session.climbs.count(),
-                            modifier = Modifier
-                                .padding(start = 12.dp, bottom = 12.dp),
-                        )
+                        Row {
+                            Column {
+                                Text(
+                                    text = SimpleDateFormat("dd/MM/yy", Locale.getDefault()).format(
+                                        session.date
+                                    ),
+                                    modifier = Modifier
+                                        .padding(start = 12.dp, top = 12.dp),
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Text(
+                                    text = "Location: " + session.location,
+                                    modifier = Modifier
+                                        .padding(start = 12.dp),
+                                )
+                                Text(
+                                    text = "Duration: " + session.duration,
+                                    modifier = Modifier
+                                        .padding(start = 12.dp),
+                                )
+                                Text(
+                                    text = "Problems Climbed: " + session.climbs.count(),
+                                    modifier = Modifier
+                                        .padding(start = 12.dp, bottom = 12.dp),
+                                )
+                            }
+
+                            // This Spacer pushes the edit icon to the far right
+                            Spacer(modifier = Modifier.weight(1f))
+
+                            IconButton(
+                                onClick = { navController.navigate("EditSession/$index") },
+                                modifier = Modifier
+                                    .align(Alignment.CenterVertically)
+                                    .padding(end = 12.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Edit,
+                                    contentDescription = "Edit",
+                                    modifier = Modifier.size(32.dp)
+                                )
+                            }
+                        }
                     }
                 }
             }

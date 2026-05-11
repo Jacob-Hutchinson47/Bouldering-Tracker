@@ -43,6 +43,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -56,31 +57,29 @@ import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateSessionScreen(viewModel: SessionViewModel, settingViewModel: SettingViewModel = viewModel(), navController: NavHostController, modifier:Modifier = Modifier){
-    val draftSession by viewModel.draftSession.collectAsState()
-    val defaultLocation by settingViewModel.location.observeAsState("")
+fun EditSessionScreen(viewModel: SessionViewModel, sessionIndex: Int, navController: NavHostController, modifier:Modifier = Modifier){
+    val sessionsData by viewModel.sessionsData.observeAsState(initial = emptyList())
 
-    var location by rememberSaveable(draftSession.location) {
-        mutableStateOf(draftSession.location)
+    if (sessionsData.isEmpty() || sessionIndex !in sessionsData.indices) return
+
+    val currentSession = sessionsData[sessionIndex]
+
+
+    var location by rememberSaveable(currentSession.location) {
+        mutableStateOf(currentSession.location)
     }
 
-    // Update the location when the location is finished reading from the disk
-    LaunchedEffect(defaultLocation) {
-        if (location.isEmpty() && defaultLocation.isNotEmpty()) {
-            location = defaultLocation
-        }
-    }
-
-    var selectedDate by remember { mutableStateOf(draftSession.date) }
+    var selectedDate by remember { mutableStateOf(currentSession.date) }
 
     var showDatePicker by remember {mutableStateOf(false)}
+
     val formatter = remember { SimpleDateFormat("dd/MM/yy", Locale.getDefault()) }
     var selectedDateText by rememberSaveable {
-        mutableStateOf(formatter.format(draftSession.date))
+        mutableStateOf(formatter.format(currentSession.date))
     }
 
     var showDurationPicker by remember { mutableStateOf(false) }
-    var durationText by rememberSaveable { mutableStateOf(draftSession.duration) }
+    var durationText by rememberSaveable { mutableStateOf(currentSession.duration) }
     val initialHour = durationText.substringBefore("h").toIntOrNull() ?: 0
     val initialMinute = durationText.substringAfter("h ")
         .substringBefore("m")
@@ -133,13 +132,13 @@ fun CreateSessionScreen(viewModel: SessionViewModel, settingViewModel: SettingVi
                     })
         )
         Text(
-            text = "Create Session",
+            text = "Edit Session",
             modifier = modifier.padding(bottom = 12.dp)
                 .fillMaxWidth(1f),
             fontSize = 26.sp,
             textAlign = TextAlign.Center,
         )
-        Row() {
+        Row () {
             Text(
                 text = "Location:",
                 modifier = Modifier.padding(8.dp)
@@ -153,7 +152,7 @@ fun CreateSessionScreen(viewModel: SessionViewModel, settingViewModel: SettingVi
                     .fillMaxWidth(1f)
             )
         }
-        Row() {
+        Row () {
             Text(
                 text = "Session Date:",
                 modifier = Modifier.padding(8.dp)
@@ -171,58 +170,60 @@ fun CreateSessionScreen(viewModel: SessionViewModel, settingViewModel: SettingVi
                 )
             }
         }
-        Row() {
+        Row () {
             Text(
                 text = "Duration:",
                 modifier = Modifier.padding(8.dp)
             )
             Card(
-                onClick = { showDurationPicker = true },
+                onClick = {showDurationPicker = true},
                 modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
             ) {
                 Text(text = durationText, modifier = Modifier.padding(16.dp))
             }
         }
 
-        Row() {
+        Row () {
             Button(
                 onClick = {
-                    // Update the draft session with the values entered
-                    viewModel.updateDraftDetails(location, selectedDate, durationText)
-
-                    navController.navigate("${AppScreens.AddClimb.name}/-1")
+                    // Update the session with the values entered
+                    viewModel.editSession(currentSession.copy(
+                        location = location,
+                        date = selectedDate,
+                        duration = durationText
+                    ))
+3
+                    navController.navigate("${AppScreens.AddClimb.name}/${sessionIndex}")
                 },
                 modifier
                     .weight(1f, true)
                     .height(64.dp)
                     .padding(8.dp)
             ) {
-                Text(
-                    text = "Add Climb",
-                    textAlign = TextAlign.Center
-                )
+                Text(text = "Add Climb",
+                    textAlign = TextAlign.Center)
             }
         }
 
         Text(
             text = "Climbs:",
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(8.dp)
+            modifier =  Modifier.padding(8.dp)
         )
-        if (draftSession.climbs.isNotEmpty()) {
+        if (currentSession.climbs.isNotEmpty()) {
             LazyColumn(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth()
             ) {
                 itemsIndexed(
-                    items = draftSession.climbs,
+                    items = currentSession.climbs,
                     key = { index, climb -> "${climb.grade}-${climb.colour}-$index" }
                 ) { climbIndex, climb ->
                     val dismissState = rememberSwipeToDismissBoxState(
                         confirmValueChange = {
                             if (it == SwipeToDismissBoxValue.EndToStart) { // Swipe Left
-                                viewModel.deleteClimbFromDraft(climbIndex)
+                                viewModel.deleteClimb(currentSession, climbIndex)
                                 true
                             } else {
                                 false
@@ -283,8 +284,11 @@ fun CreateSessionScreen(viewModel: SessionViewModel, settingViewModel: SettingVi
 
         Button(
             onClick = {
-                viewModel.updateDraftDetails(location, selectedDate, durationText)
-                viewModel.saveDraftAsNewSession()
+                viewModel.editSession(currentSession.copy(
+                    location = location,
+                    date = selectedDate,
+                    duration = durationText
+                ))
                 navController.popBackStack() // Go back to home screen
             },
             modifier = Modifier
@@ -294,59 +298,5 @@ fun CreateSessionScreen(viewModel: SessionViewModel, settingViewModel: SettingVi
         ) {
             Text("Save Session")
         }
-    }
-}
-
-@Composable
-fun DurationPickerDialog(
-    onDismissRequest: () -> Unit,
-    onConfirm: () -> Unit,
-    content: @Composable () -> Unit
-) {
-    AlertDialog(
-        onDismissRequest = onDismissRequest,
-        confirmButton = {
-            TextButton(onClick = onConfirm) {
-                Text("OK")
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismissRequest) {
-                Text("Cancel")
-            }
-        },
-        title = { Text("Set Duration") },
-        text = { content() }
-    )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun DatePickerModalInput(
-    onDateSelected: (Long?) -> Unit,
-    onDismiss: () -> Unit
-) {
-    // Initialize the state with the current time in milliseconds
-    val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = System.currentTimeMillis(),
-        initialDisplayMode = DisplayMode.Input
-    )
-
-    DatePickerDialog(
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            TextButton(onClick = {
-                onDateSelected(datePickerState.selectedDateMillis)
-            }) {
-                Text("OK")
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Cancel")
-            }
-        }
-    ) {
-        DatePicker(state = datePickerState)
     }
 }
