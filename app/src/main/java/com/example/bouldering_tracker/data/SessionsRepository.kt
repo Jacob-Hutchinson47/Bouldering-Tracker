@@ -3,7 +3,7 @@ package com.example.bouldering_tracker.data
 import androidx.lifecycle.LiveData
 
 class SessionsRepository(private val sessionsDao: SessionsDao) {
-    val allSessions: LiveData<List<Session>> = sessionsDao.getWeather()
+    val allSessions: LiveData<List<Session>> = sessionsDao.getSessions()
     suspend fun insertSession(session:Session){
         sessionsDao.insert(session)
     }

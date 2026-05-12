@@ -44,6 +44,7 @@ import androidx.navigation.NavHostController
 import com.example.bouldering_tracker.data.Session
 import java.text.SimpleDateFormat
 import java.util.Locale
+import androidx.compose.ui.platform.LocalLocale
 
 @Composable
 fun HomeScreen(viewModel: SessionViewModel, navController: NavHostController, modifier: Modifier = Modifier) {
@@ -154,7 +155,7 @@ fun SessionsList(viewModel: SessionViewModel, sessions:List<Session>, navControl
                         Row {
                             Column {
                                 Text(
-                                    text = SimpleDateFormat("dd/MM/yy", Locale.getDefault()).format(
+                                    text = SimpleDateFormat("dd/MM/yy", LocalLocale.current.platformLocale).format(
                                         session.date
                                     ),
                                     modifier = Modifier

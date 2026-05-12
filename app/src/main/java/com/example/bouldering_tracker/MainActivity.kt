@@ -20,6 +20,7 @@ import androidx.navigation.navArgument
 import com.example.bouldering_tracker.ui.AddClimbScreen
 import com.example.bouldering_tracker.ui.ClimbInfoScreen
 import com.example.bouldering_tracker.ui.CreateSessionScreen
+import com.example.bouldering_tracker.ui.EditClimbScreen
 import com.example.bouldering_tracker.ui.EditSessionScreen
 import com.example.bouldering_tracker.ui.HomeScreen
 import com.example.bouldering_tracker.ui.SessionInfoScreen
@@ -112,16 +113,28 @@ class MainActivity : ComponentActivity() {
                                     navController
                                 )
                             }
-                            /*composable(
-                                route = AppScreens.EditClimb.name + "/{climbIndex}",
-                                arguments = listOf(navArgument("climbIndex") { type = NavType.IntType })
-                            ) { backStackEntry ->
+                            composable(
+                                route = com.example.bouldering_tracker.AppScreens.EditClimb.name+"/{sessionIndex}/{climbIndex}",
+                                arguments = listOf(
+                                    navArgument(name = "sessionIndex"){
+                                        type = NavType.IntType
+                                    },
+                                    navArgument(name = "climbIndex"){
+                                        type = NavType.IntType
+                                    }
+                                )
+                            ) {
+                                    backStackEntry ->
+                                val sessionIndex = backStackEntry.arguments?.getInt("sessionIndex") ?: 0
+                                val climbIndex = backStackEntry.arguments?.getInt("climbIndex") ?: 0
+
                                 EditClimbScreen(
-                                    climbsData,
-                                    climbIndex = backStackEntry.arguments?.getInt("climbIndex") ?: 0,
+                                    viewModel,
+                                    sessionIndex = sessionIndex,
+                                    climbIndex = climbIndex,
                                     navController
                                 )
-                            }*/
+                            }
                         }
                     }
                 }

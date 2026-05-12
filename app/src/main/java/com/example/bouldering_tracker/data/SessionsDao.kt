@@ -15,7 +15,7 @@ interface SessionsDao {
 
     //fetch all session information
     @Query("SELECT * FROM sessions")
-    fun getWeather(): LiveData<List<Session>>
+    fun getSessions(): LiveData<List<Session>>
 
     //delete all session information
     @Query("DELETE FROM sessions")

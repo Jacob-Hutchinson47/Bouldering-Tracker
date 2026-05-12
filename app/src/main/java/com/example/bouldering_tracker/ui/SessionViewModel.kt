@@ -114,4 +114,16 @@ class SessionViewModel(application: Application) : AndroidViewModel(application)
         updatedClimbs.add(climb)
         _draftSession.value = _draftSession.value.copy(climbs = updatedClimbs)
     }
+
+    fun editClimb(sessionIndex: Int, climbIndex: Int, climb: Climb) {
+        viewModelScope.launch {
+            val currentList = sessionsData.value
+            if (currentList != null && sessionIndex in currentList.indices) {
+                val sessionToUpdate = currentList[sessionIndex]
+                sessionToUpdate.climbs.removeAt(climbIndex)
+                sessionToUpdate.climbs.add(climb)
+                sessionsRepository.updateSession(sessionToUpdate)
+            }
+        }
+    }
 }
