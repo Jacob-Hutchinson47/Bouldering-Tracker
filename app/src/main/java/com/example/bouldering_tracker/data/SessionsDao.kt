@@ -1,5 +1,6 @@
 package com.example.bouldering_tracker.data
 
+import android.database.Cursor
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
@@ -29,4 +30,16 @@ interface SessionsDao {
 
     @Delete
     suspend fun delete(session: Session)
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    fun insertSessionSynchronous(session: Session): Long
+
+    @Query("SELECT * FROM Sessions")
+    fun getAllSessionsCursor(): Cursor
+
+    @Query("SELECT * FROM Sessions WHERE id = :id")
+    fun getSessionItemCursor(id: Int): Cursor
+
+    @Query("DELETE FROM Sessions WHERE id = :id")
+    fun deleteSessionById(id: Int): Int
 }
